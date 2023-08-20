@@ -6,7 +6,7 @@ import (
 
 // Application implements the APIPort interface
 type Application struct {
-	db    ports.DbPort
+	db       ports.DbPort
 	shortner Shortner
 }
 
@@ -15,17 +15,17 @@ func NewApplication(db ports.DbPort, shortner Shortner) *Application {
 	return &Application{db: db, shortner: shortner}
 }
 
-func (apia Application) NewURL(url,username string) (string, error) {
-	urlID,err:=apia.shortner.Short(url)
+func (apia Application) NewURL(url, username string) (string, error) {
+	urlID, err := apia.shortner.Short(url)
 	if err != nil {
 		return "", err
 	}
-	apia.db.AddURL(url,string(urlID),username)
+	apia.db.AddURL(url, string(urlID), username)
 	return string(urlID), nil
 }
 
 func (apia Application) GetURL(id string) (string, error) {
-	url,err:=apia.db.GetURL(id)
+	url, err := apia.db.GetURL(id)
 	if err != nil {
 		return "", err
 	}
@@ -33,15 +33,15 @@ func (apia Application) GetURL(id string) (string, error) {
 }
 
 func (apia Application) AddMetrics(id string) error {
-	err:=apia.db.AddHit(id)
+	err := apia.db.AddHit(id)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (apia Application) DeleteURL(id,username string) error {
-	err:=apia.db.DeleteURL(id,username)
+func (apia Application) DeleteURL(id, username string) error {
+	err := apia.db.DeleteURL(id, username)
 	if err != nil {
 		return err
 	}
@@ -49,10 +49,9 @@ func (apia Application) DeleteURL(id,username string) error {
 }
 
 func (apia Application) GetMetrics(username string) (map[string]int, error) {
-	metrics,err:=apia.db.GetHits(username)
+	metrics, err := apia.db.GetHits(username)
 	if err != nil {
 		return nil, err
 	}
 	return metrics, nil
 }
-

@@ -18,19 +18,17 @@ func main() {
 
 
 	NODE_ID := os.Getenv("NODE_ID")
-	//CLUSTER_IPS := os.Getenv("CLUSTER_IPS")
-	CLUSTER_KEYSPACE := os.Getenv("CLUSTER_KEYSPACE")
-	///
+	MONGO_URI := os.Getenv("MONGO_URI")
 	NODE_ID = "node1"
-	var CLUSTER_IPS = []string{"127.0.0.1"}
-	CLUSTER_KEYSPACE = "shortner"
+	MONGO_URI = "mongodb://localhost:27017"
 	///
-	dbAdapter, err := db.NewAdapter(CLUSTER_IPS, CLUSTER_KEYSPACE)
+	dbAdapter, err := db.NewAdapter(MONGO_URI )
 	if err != nil {
 		log.Fatalf("failed to initiate dbase connection: %v", err)
 	}
 	defer dbAdapter.CloseDbConnection()
 
+	
 	// core
 	core,err:= shortner.New(NODE_ID)
 	if err != nil {
