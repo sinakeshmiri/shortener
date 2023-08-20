@@ -1,16 +1,52 @@
 version: '3'
-
 services:
-  some-scylla:
-    image: scylladb/scylla
-    container_name: some-scylla
+  shortner:
+    build: .
+    ports:
+      - "8082:3000"
+    environment:
+      - NODE_ID=1
+      - MONGO_URI=mongodb://mongo:27017
+      - AUTHN_URL=http://authn.shortnerd.local:8080
+      - AUTHN_PASSWORD=sina
+      - AUTHN_USERNAME=sina
+      - AUTHN_ISSUER=http://authn.shortnerd.local:8080
+      - AUTHN_AUDIENCE=shortnerd.local
+    depends_on:
+      - authn
+      - mongo
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+  authndb:
+    image: bitnami/postgresql:14.9.0
+    ports:
+       - '5432:5432'
+    environment:
+      - POSTGRES_PASSWORD=S3cret
+      - POSTGRES_USER=authn
+      - POSTGRES_DB=authn
 
-  some-scylla2:
-    image: scylladb/scylla
-    container_name: some-scylla2
-    command: --seeds=some-scylla
 
-  some-scylla3:
-    image: scylladb/scylla
-    container_name: some-scylla3
-    command: --seeds=some-scylla
+  redis:
+    image: redis
+
+  authn:
+    image: keratin/authn-server:1.17.0
+    ports:
+      - "8080:3000"
+      - "8081:3001"
+    environment:
+      - DATABASE_URL=postgres://authn:S3cret@authndb:5432/authn?sslmode=disable
+      - REDIS_URL=redis://redis:6379/0
+      - AUTHN_URL=http://authn.shortnerd.local:8080
+      - HTTP_AUTH_USERNAME=sina
+      - HTTP_AUTH_PASSWORD=sina
+      - APP_DOMAINS=shortnerd.local
+      - SECRET_KEY_BASE=kzJr4WEFABfCm5vTvZUJ
+      - PUBLIC_PORT=3001
+    depends_on:
+      - redis
+      - authndb
+    command: sh -c "./authn migrate && ./authn server"

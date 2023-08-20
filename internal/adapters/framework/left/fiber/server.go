@@ -3,6 +3,7 @@ package httpfiber
 import (
 	"log"
 
+	"github.com/keratin/authn-go/authn"
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/sinakeshmiri/shortner/internal/ports"
@@ -10,11 +11,16 @@ import (
 
 // Adapter implements the http Port interface
 type Adapter struct {
+	authc *authn.Client
 	api ports.APIPort
 }
 
-func NewAdapter(api ports.APIPort) *Adapter {
-	return &Adapter{api: api}
+func NewAdapter(api ports.APIPort,authc authn.Config) (*Adapter,error) {
+	c,err := authn.NewClient(authc)
+	if err != nil {
+		return nil,err
+	}
+	return &Adapter{api: api,authc: c},nil
 }
 
 func (ha Adapter) Run() {
