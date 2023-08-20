@@ -33,7 +33,7 @@ func (apia Application) GetURL(id string) (string, error) {
 }
 
 func (apia Application) AddMetrics(id string) error {
-	err:=apia.db.AddMetrics(id)
+	err:=apia.db.AddHit(id)
 	if err != nil {
 		return err
 	}
@@ -49,7 +49,7 @@ func (apia Application) DeleteURL(id,username string) error {
 }
 
 func (apia Application) GetMetrics(username string) (map[string]int, error) {
-	metrics,err:=apia.db.GetMetrics(username)
+	metrics,err:=apia.db.GetHits(username)
 	if err != nil {
 		return nil, err
 	}
