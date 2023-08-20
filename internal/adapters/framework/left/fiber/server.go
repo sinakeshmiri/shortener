@@ -19,7 +19,7 @@ func NewAdapter(api ports.APIPort) *Adapter {
 
 func (ha Adapter) Run() {
 	app := fiber.New()
-	app.Get("/r/:id", ha.redirect)
+	app.Get("/:id", ha.redirect)
 	app.Post("/api/:username", ha.addURL)
 	app.Delete("/api/:username/:id", ha.deleteURL)
 	app.Get("/api/:username", ha.getMetrics)
