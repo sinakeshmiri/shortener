@@ -16,7 +16,8 @@ type Adapter struct {
 func NewAdapter(addresses[]string, keyspace string) (*Adapter, error) {
 	// connect to the cluster
 	///// Set up the ScyllaDB cluster configuration
-	cluster := gocql.NewCluster(addresses...) // Replace with your ScyllaDB node(s) addresses
+	cluster := gocql.NewCluster(addresses...)
+	cluster.Consistency = gocql.Quorum
 	cluster.Keyspace = keyspace          // Replace with your keyspace name
 	cluster.Timeout = 5 * time.Second
 
@@ -63,7 +64,7 @@ func (da Adapter)GetHits(username string) (map[string]int, error){
 	var id string
 	var hits int
 	metrics:=make(map[string]int)
-	query := da.session.Query("SELECT id,hits FROM metrics WHERE username = ?", username)
+	query := da.session.Query("SELECT id,hits FROM urls WHERE username = ?", username)
 	iter := query.Iter()
 	for iter.Scan(&id,&hits){
 		metrics[id]=hits

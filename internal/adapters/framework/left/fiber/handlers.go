@@ -5,12 +5,12 @@ import (
 )
 
 type URL struct {
-	URL   string `json:"url"`
+	URL string `json:"url"`
 }
 
 func (ha Adapter) redirect(c *fiber.Ctx) error {
-	url,err:=ha.api.GetURL(c.Params("id"))
-	if err!=nil{
+	url, err := ha.api.GetURL(c.Params("id"))
+	if err != nil {
 		return err
 	}
 	ha.api.AddMetrics(c.Params("id"))
@@ -18,11 +18,12 @@ func (ha Adapter) redirect(c *fiber.Ctx) error {
 }
 
 func (ha Adapter) addURL(c *fiber.Ctx) error {
+
 	url := new(URL)
 	if err := c.BodyParser(url); err != nil {
 		return err
 	}
-	urlID, err := ha.api.NewURL(url.URL, c.Params("id"))
+	urlID, err := ha.api.NewURL(url.URL, c.Params("username"))
 	if err != nil {
 		return err
 	}
