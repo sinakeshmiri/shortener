@@ -1,13 +1,5 @@
 package httpfiber
 
-/*
-	NewURL(url,username string) (string, error)
-	GetURL(id string) (string, error)
-	AddMetrics(id string) error
-	DeleteURL(id,username string) error
-	GetMetrics(username string) (map[string]int, error)
-*/
-
 import (
 	"log"
 
