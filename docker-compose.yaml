@@ -7,7 +7,7 @@ services:
     environment:
       - NODE_ID=1
       - MONGO_URI=mongodb://mongo:27017
-      - AUTHN_URL=http://authn.shortnerd.local:8080
+      - AUTHN_URL=http://authn:3000
       - AUTHN_PASSWORD=sina
       - AUTHN_USERNAME=sina
       - AUTHN_ISSUER=http://authn.shortnerd.local:8080
@@ -18,7 +18,7 @@ services:
   mongo:
     image: mongo
     ports:
-      - "27017:27017"
+      - "27018:27017"
   authndb:
     image: bitnami/postgresql:14.9.0
     ports:
