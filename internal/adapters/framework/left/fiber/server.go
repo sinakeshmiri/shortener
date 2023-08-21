@@ -25,9 +25,9 @@ func NewAdapter(api ports.APIPort,authc authn.Config) (*Adapter,error) {
 
 func (ha Adapter) Run() {
 	app := fiber.New()
-	app.Get("/:id", ha.redirect)
-	app.Post("/api/:username", ha.addURL)
-	app.Delete("/api/:username/:id", ha.deleteURL)
-	app.Get("/api/:username", ha.getMetrics)
+	app.Get("/:id",ha.redirect)
+	app.Post("/api/:username",ha.authnMiddleware, ha.addURL)
+	app.Delete("/api/:username/:id",ha.authnMiddleware, ha.deleteURL)
+	app.Get("/api/:username",ha.authnMiddleware, ha.getMetrics)
 	log.Fatal(app.Listen(":3000"))
 }

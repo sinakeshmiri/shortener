@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func (ha Adapter) jwtMiddleware(c *fiber.Ctx) error {
+func (ha Adapter) authnMiddleware(c *fiber.Ctx) error {
 	authorizationHeader := c.Get("Authorization")
 	if authorizationHeader == "" {
 		return c.Status(fiber.StatusUnauthorized).SendString("Missing authorization header")
