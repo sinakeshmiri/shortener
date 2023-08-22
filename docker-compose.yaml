@@ -64,8 +64,14 @@ services:
     hostname: mongodb-exporter
     ports:
       - 9216:9216
-    environment:
-      - MONGODB_URI=mongodb://mongo:27017
+    command: 
+      - "--mongodb.uri=mongodb://mongo:27017"
+      - "--mongodb.collstats-colls=Test.Listings"
+      - "--discovering-mode"
+      - "--mongodb.direct-connect"  
+      - "--collect-all"  
+      - "--compatible-mode"
+
 
   prometheus:
     image: prom/prometheus
