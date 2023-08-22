@@ -4,9 +4,15 @@ import (
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
+	"go.opentelemetry.io/otel"
+	oteltrace "go.opentelemetry.io/otel/trace"
 )
 
+var tracer = otel.Tracer("authn")
+
 func (ha Adapter) authnMiddleware(c *fiber.Ctx) error {
+	_, span := tracer.Start(c.Context(), "authn", oteltrace.WithAttributes())
+	defer span.End()
 	authorizationHeader := c.Get("Authorization")
 	if authorizationHeader == "" {
 		return c.Status(fiber.StatusUnauthorized).SendString("Missing authorization header")

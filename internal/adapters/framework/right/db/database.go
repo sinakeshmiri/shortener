@@ -7,6 +7,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+
+	"go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo"
 )
 
 // Adapter implements the DbPort interface
@@ -17,12 +20,12 @@ type Adapter struct {
 // NewAdapter creates a new Adapter
 func NewAdapter(mongouri string) (*Adapter, error) {
 	// Set client options
-	clientOptions := options.Client().ApplyURI(mongouri)
-
-	// Connect to MongoDB
-	client, err := mongo.Connect(context.Background(), clientOptions)
+	opts := options.Client()
+	opts.Monitor = otelmongo.NewMonitor()
+	opts.ApplyURI("mongodb://mongo:27017")
+	client, err := mongo.Connect(context.Background(), opts)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
 
 	// Ping the database to verify the connection

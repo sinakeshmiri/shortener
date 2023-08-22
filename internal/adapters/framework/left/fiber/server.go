@@ -7,15 +7,21 @@ import (
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/sinakeshmiri/shortner/internal/ports"
+
+
+	"github.com/gofiber/contrib/otelfiber"
+
+
 )
 
 // Adapter implements the http Port interface
 type Adapter struct {
 	authc *authn.Client
 	api ports.APIPort
+
 }
 
-func NewAdapter(api ports.APIPort,authc authn.Config) (*Adapter,error) {
+func NewAdapter(authc authn.Config, api ports.APIPort) (*Adapter,error) {
 	c,err := authn.NewClient(authc)
 	if err != nil {
 		return nil,err
@@ -24,7 +30,9 @@ func NewAdapter(api ports.APIPort,authc authn.Config) (*Adapter,error) {
 }
 
 func (ha Adapter) Run() {
+	
 	app := fiber.New()
+	app.Use(otelfiber.Middleware())
 	app.Get("/:id",ha.redirect)
 	app.Post("/api/:username",ha.authnMiddleware, ha.addURL)
 	app.Delete("/api/:username/:id",ha.authnMiddleware, ha.deleteURL)
