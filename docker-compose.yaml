@@ -70,7 +70,7 @@ services:
       - "--discovering-mode"
       - "--mongodb.direct-connect"  
       - "--collect-all"  
-      - "--compatible-mode"
+      - "--compatible-mode~"
 
 
   prometheus:
