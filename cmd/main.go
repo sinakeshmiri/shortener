@@ -56,12 +56,13 @@ func main() {
 	defer dbAdapter.CloseDbConnection()
 
 	// core
-	core, err := shortner.New(NODE_ID)
+	urlschan:=make(chan string,1000)
+	core, err := shortner.New(NODE_ID,urlschan)
 	if err != nil {
 		log.Fatalf("failed to initiate core: %v", err)
 	}
-
-	applicationAPI := api.NewApplication(dbAdapter, core)
+	
+	applicationAPI := api.NewApplication(dbAdapter, core,urlschan)
 
 	ac := authn.Config{
 		Issuer:         AUTHN_ISSUER,

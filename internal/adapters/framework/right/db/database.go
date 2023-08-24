@@ -77,7 +77,7 @@ func (da Adapter) GetHits(username string) (map[string]int, error) {
 		if err = cursor.Decode(&url); err != nil {
 			return nil, err
 		}
-		metrics[url.ID] = 0
+		metrics[url.ID] = url.Hits
 	}
 	return metrics, nil
 }
@@ -89,6 +89,7 @@ func (da Adapter) GetURL(id string) (string, error) {
 	log.Println(id)
 	log.Println(url)
 	if err != nil {
+		log.Println(err)
 		return "", err
 	}
 	return url.URL, nil
