@@ -8,19 +8,22 @@ import (
 type Application struct {
 	db       ports.DbPort
 	shortner Shortner
+	urlschan 	chan string
 }
 
 // NewApplication creates a new Application
-func NewApplication(db ports.DbPort, shortner Shortner) *Application {
-	return &Application{db: db, shortner: shortner}
+func NewApplication(db ports.DbPort, shortner Shortner,urlschan chan string) *Application {
+	go shortner.Short()
+	return &Application{db: db, shortner: shortner, urlschan: urlschan}
 }
 
 func (apia Application) NewURL(url, username string) (string, error) {
-	urlID, err := apia.shortner.Short(url)
+	/*urlID, err := apia.shortner.Short(url)
 	if err != nil {
 		return "", err
-	}
-	apia.db.AddURL(url, string(urlID), username)
+	}*/
+	urlID:=<-apia.urlschan
+	apia.db.AddURL(url, urlID, username)
 	return string(urlID), nil
 }
 

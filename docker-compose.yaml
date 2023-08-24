@@ -4,21 +4,21 @@ services:
     build: .
     ports:
       - "8082:3000"
+      - "2112:2112"
     environment:
       - NODE_ID=1
       - MONGO_URI=mongodb://mongo:27017
-      - AUTHN_URL=http://authn.shortnerd.local:8080
+      - AUTHN_URL=http://authn:3000
       - AUTHN_PASSWORD=sina
       - AUTHN_USERNAME=sina
       - AUTHN_ISSUER=http://authn.shortnerd.local:8080
       - AUTHN_AUDIENCE=shortnerd.local
+      - OTEL_EXPORTER_JAEGER_ENDPOINT=http://jaeger:14268/api/traces
     depends_on:
       - authn
       - mongo
   mongo:
     image: mongo
-    ports:
-      - "27017:27017"
   authndb:
     image: bitnami/postgresql:14.9.0
     ports:
@@ -28,6 +28,14 @@ services:
       - POSTGRES_USER=authn
       - POSTGRES_DB=authn
 
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "16686:16686"
+      - "14268:14268"
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+      - LOG_LEVEL=debug
 
   redis:
     image: redis
@@ -50,3 +58,40 @@ services:
       - redis
       - authndb
     command: sh -c "./authn migrate && ./authn server"
+  mongodb-exporter:
+    image: percona/mongodb_exporter:0.39
+    container_name: mongodb-exporter
+    hostname: mongodb-exporter
+    ports:
+      - 9216:9216
+    command: 
+      - "--mongodb.uri=mongodb://mongo:27017"
+      - "--mongodb.collstats-colls=Test.Listings"
+      - "--discovering-mode"
+      - "--mongodb.direct-connect"  
+      - "--collect-all"  
+      - "--compatible-mode~"
+
+
+  prometheus:
+    image: prom/prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./configs/prometheus:/etc/prometheus
+    command:
+      - '--config.file=/etc/prometheus/config.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    restart: unless-stopped
+    ports:
+      - "3200:3000"

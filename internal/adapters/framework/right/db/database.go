@@ -7,6 +7,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+
+	"go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo"
 )
 
 // Adapter implements the DbPort interface
@@ -17,12 +20,12 @@ type Adapter struct {
 // NewAdapter creates a new Adapter
 func NewAdapter(mongouri string) (*Adapter, error) {
 	// Set client options
-	clientOptions := options.Client().ApplyURI(mongouri)
-
-	// Connect to MongoDB
-	client, err := mongo.Connect(context.Background(), clientOptions)
+	opts := options.Client()
+	opts.Monitor = otelmongo.NewMonitor()
+	opts.ApplyURI("mongodb://mongo:27017")
+	client, err := mongo.Connect(context.Background(), opts)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
 
 	// Ping the database to verify the connection
@@ -40,23 +43,17 @@ func (da Adapter) CloseDbConnection() {
 }
 
 func (da Adapter) AddURL(url, urlID, username string) error {
+	newUrl := urlStruct{
+		ID:       urlID,
+		URL:      url,
+		Username: username,
+		Hits:     0,
+	}
 	collection := da.client.Database("urlshortener").Collection("urls")
-
-	// Convert "hits" to an integer value (0)
-	hits := 0
-
-	_, err := collection.InsertOne(context.Background(), map[string]interface{}{
-		"id":       urlID,
-		"url":      url,
-		"username": username,
-		"hits":     hits, // Insert as an integer
-	})
-
+	_, err := collection.InsertOne(context.Background(),newUrl)
 	if err != nil {
-
 		return err
 	}
-
 	return nil
 }
 
@@ -74,25 +71,28 @@ func (da Adapter) GetHits(username string) (map[string]int, error) {
 	if err != nil {
 		return nil, err
 	}
-	var url map[string]any
+	var url urlStruct 
 	metrics := make(map[string]int)
 	for cursor.Next(context.Background()) {
 		if err = cursor.Decode(&url); err != nil {
 			return nil, err
 		}
-		metrics[url["id"].(string)] = 0
+		metrics[url.ID] = url.Hits
 	}
 	return metrics, nil
 }
 
 func (da Adapter) GetURL(id string) (string, error) {
 	collection := da.client.Database("urlshortener").Collection("urls")
-	var url map[string]any
+	var url urlStruct
 	err := collection.FindOne(context.Background(), map[string]string{"id": id}).Decode(&url)
+	log.Println(id)
+	log.Println(url)
 	if err != nil {
+		log.Println(err)
 		return "", err
 	}
-	return url["url"].(string), nil
+	return url.URL, nil
 }
 func (da Adapter) AddHit(id string) error {
 	collection := da.client.Database("urlshortener").Collection("urls")
@@ -109,4 +109,11 @@ func (da Adapter) AddHit(id string) error {
 	}
 
 	return nil
+}
+
+type urlStruct struct{
+	ID string `bson:"id"`
+	URL string `bson:"url"`
+	Username string `bson:"username"`
+	Hits int `bson:"hits"`
 }
