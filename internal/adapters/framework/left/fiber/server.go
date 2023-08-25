@@ -34,8 +34,8 @@ func (ha Adapter) Run() {
 	app := fiber.New()
 	app.Use(otelfiber.Middleware())
 	app.Get("/:id",ha.redirect)
-	app.Post("/api/:username",ha.authnMiddleware, ha.addURL)
-	app.Delete("/api/:username/:id",ha.authnMiddleware, ha.deleteURL)
-	app.Get("/api/:username",ha.authnMiddleware, ha.getMetrics)
+	app.Post("/api/v1/url",ha.authnMiddleware, ha.addURL)
+	app.Delete("/api/v1/url/:id",ha.authnMiddleware, ha.deleteURL)
+	app.Get("/api/v1/url/:id?",ha.authnMiddleware, ha.getMetrics)
 	log.Fatal(app.Listen(":3000"))
 }
