@@ -6,6 +6,6 @@ type DbPort interface {
 	AddURL(url,urlID,username string) error
 	GetURL(id string) (string, error)
 	DeleteURL(id,username string) error
-	GetHits(username string) (map[string]int, error)
+	GetHits(username,id string) (map[string]int, error)
 	AddHit(id string) error
 }

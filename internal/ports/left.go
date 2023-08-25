@@ -7,5 +7,5 @@ type APIPort interface {
 	GetURL(id string) (string, error)
 	AddMetrics(id string) error
 	DeleteURL(id,username string) error
-	GetMetrics(username string) (map[string]int, error)
+	GetMetrics(username,id string) (map[string]int, error)
 }

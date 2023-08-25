@@ -39,7 +39,8 @@ func (ha Adapter) deleteURL(c *fiber.Ctx) error {
 }
 
 func (ha Adapter) getMetrics(c *fiber.Ctx) error {
-	metrics, err := ha.api.GetMetrics(c.Params("username"))
+	id:= c.Params("id")
+	metrics, err := ha.api.GetMetrics(c.Params("username"),id)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).SendString(err.Error())
 	}

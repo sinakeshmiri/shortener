@@ -26,16 +26,12 @@ func (ha Adapter) authnMiddleware(c *fiber.Ctx) error {
 	// You can now use the 'token' variable for JWT validation or other purposes
 	sub, err := ha.authc.SubjectFrom(token)
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).SendString("Invalid token 1"+err.Error())
+		return c.Status(fiber.StatusUnauthorized).SendString("Invalid token " + err.Error())
 	}
-	acc,err:=ha.authc.GetAccount(sub)
-	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).SendString("Invalid token 2"+err.Error())
-	}
-	if c.Params("username")==acc.Username{
-		return c.Next()
-	}
-	return c.Status(fiber.StatusUnauthorized).SendString("Invalid token 3")
+	//sub
+	c.Locals("username", sub)
+	return c.Next()
+
 }
 
 func extractTokenFromHeader(authorizationHeader string) string {

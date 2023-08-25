@@ -51,8 +51,8 @@ func (apia Application) DeleteURL(id, username string) error {
 	return nil
 }
 
-func (apia Application) GetMetrics(username string) (map[string]int, error) {
-	metrics, err := apia.db.GetHits(username)
+func (apia Application) GetMetrics(username,id string) (map[string]int, error) {
+	metrics, err := apia.db.GetHits(username,id)
 	if err != nil {
 		return nil, err
 	}
