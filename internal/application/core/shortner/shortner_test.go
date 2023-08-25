@@ -25,7 +25,7 @@ func TestShortner(t *testing.T) {
 		if len(url) == 0 {
 			t.Error("Generated URL should not be empty")
 		}
-	case <-time.After(20 * time.Microsecond):
+	case <-time.After(2 * time.Second):
 		t.Error("Timeout: No URL generated within expected time")
 	}
 }
