@@ -69,10 +69,6 @@ jobs:
           tags: |
             latest
             ${{ github.sha }}
-            ${{ github.ref }}
-            ${{ github.ref_slug }}
-            ${{ github.short_sha }}
-            ${{ steps.meta.outputs.tags }}
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
