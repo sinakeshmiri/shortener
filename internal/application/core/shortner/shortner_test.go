@@ -7,7 +7,7 @@ import (
 
 func TestShortner(t *testing.T) {
 	urlschan := make(chan string)
-	defer close(urlschan)
+
 
 	shortner, err := New("testNode", urlschan)
 	if err != nil {
