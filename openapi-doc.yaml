@@ -1,0 +1,145 @@
+openapi: 3.0.0
+info:
+  title: Url Shortener APIs Documentation
+  description: github.com/sinakeshmiri/shortener
+  version: 1.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/MSINAKESHMIRI/shortener/1.0.0
+  - url: http://localhost:3000  # Update with your server URL
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+paths:
+  /{id}:
+    get:
+      summary: Perform a redirect based on ID
+      parameters:
+        - name: id
+          in: path
+          description: ID to identify the resource to redirect to
+          required: true
+          schema:
+            type: string
+      responses:
+        '301':
+          description: Resource moved permanently
+        '404':
+          description: Resource not found
+  /api/v1/url:
+    post:
+      summary: Add a new URL
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+              required:
+                - URL
+      responses:
+        '200':
+          description: URL added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  urlID:
+                    type: string
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+    get:
+      summary: shows all urls  mwtrics
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: show all  metrics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  metrics:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        urlID:
+                          type: string
+                        hits:
+                          type: integer
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+  /api/v1/url/{id}:
+    delete:
+      summary: Delete a URL by ID
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of the URL to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: URL deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+        '401':
+          description: Unauthorized
+        '404':
+          description: Resource not found
+    get:
+      summary: Get metrics for a URL by ID
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the URL to get metrics for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Metrics retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  metrics:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        urlID:
+                          type: string
+                        hits:
+                          type: integer
+        '401':
+          description: Unauthorized
+        '404':
+          description: Resource not found
