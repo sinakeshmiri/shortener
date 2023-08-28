@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "shortener.fullname" . }}-configmap
+  labels:
+  {{- include "shortener.labels" . | nindent 4 }}
+data:
+  AUTHN_AUDIENCE: {{ .Values.configmap.authnAudience | quote }}
+  AUTHN_ISSUER: {{ .Values.configmap.authnIssuer | quote }}
+  NODE_ID: {{ .Values.configmap.nodeId | quote }}
+  OTEL_EXPORTER_JAEGER_ENDPOINT: {{ .Values.configmap.otelExporterJaegerEndpoint
+    | quote }}

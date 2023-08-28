@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "shortener.fullname" . }}-deployment
+  labels:
+  {{- include "shortener.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: shortener-app
+    {{- include "shortener.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: shortener-app
+      {{- include "shortener.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        envFrom:
+        - secretRef:
+            name: shortener-secret
+        - configMapRef:
+            name: {{ include "shortener.fullname" . }}-configmap
+        image: {{ .Values.deployment.shortener.image.repository }}:{{ .Values.deployment.shortener.image.tag
+          | default .Chart.AppVersion }}
+        name: shortener
+        ports:
+        - containerPort: 3080
+        resources: {}
+      serviceAccountName: {{ include "shortener.fullname" . }}-sa

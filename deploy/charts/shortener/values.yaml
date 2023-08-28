@@ -1,0 +1,21 @@
+configmap:
+  authnAudience: shortener.example.com
+  authnIssuer: http://authn.example.com
+  nodeId: "1"
+  otelExporterJaegerEndpoint: http://jaeger:14268/api/traces
+deployment:
+  replicas: 3
+  shortener:
+    image:
+      repository: sinakeshmiri/shortner
+      tag: main
+kubernetesClusterDomain: cluster.local
+sa:
+  serviceAccount:
+    annotations: {}
+service:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 3080
+  type: ClusterIP
