@@ -13,6 +13,7 @@ spec:
       labels:
         app: shortener-app
     spec:
+      serviceAccountName: shortener-sa
       containers:
         - name: shortener
           image: sinakeshmiri/shortner
