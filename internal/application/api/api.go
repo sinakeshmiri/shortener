@@ -1,28 +1,28 @@
 package api
 
 import (
-	"github.com/sinakeshmiri/shortner/internal/ports"
+	"github.com/sinakeshmiri/shortener/internal/ports"
 )
 
 // Application implements the APIPort interface
 type Application struct {
-	db       ports.DbPort
-	shortner Shortner
-	urlschan 	chan string
+	db        ports.DbPort
+	shortener shortener
+	urlschan  chan string
 }
 
 // NewApplication creates a new Application
-func NewApplication(db ports.DbPort, shortner Shortner,urlschan chan string) *Application {
-	go shortner.Short()
-	return &Application{db: db, shortner: shortner, urlschan: urlschan}
+func NewApplication(db ports.DbPort, shortener shortener, urlschan chan string) *Application {
+	go shortener.Short()
+	return &Application{db: db, shortener: shortener, urlschan: urlschan}
 }
 
 func (apia Application) NewURL(url, username string) (string, error) {
-	/*urlID, err := apia.shortner.Short(url)
+	/*urlID, err := apia.shortener.Short(url)
 	if err != nil {
 		return "", err
 	}*/
-	urlID:=<-apia.urlschan
+	urlID := <-apia.urlschan
 	apia.db.AddURL(url, urlID, username)
 	return string(urlID), nil
 }
@@ -51,8 +51,8 @@ func (apia Application) DeleteURL(id, username string) error {
 	return nil
 }
 
-func (apia Application) GetMetrics(username,id string) (map[string]int, error) {
-	metrics, err := apia.db.GetHits(username,id)
+func (apia Application) GetMetrics(username, id string) (map[string]int, error) {
+	metrics, err := apia.db.GetHits(username, id)
 	if err != nil {
 		return nil, err
 	}

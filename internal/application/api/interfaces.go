@@ -1,6 +1,6 @@
 package api
 
-// Shortner
-type Shortner interface {
-	Short() ()
+// shortener
+type shortener interface {
+	Short()
 }

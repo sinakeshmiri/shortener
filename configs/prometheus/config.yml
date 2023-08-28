@@ -7,7 +7,7 @@ scrape_configs:
     scrape_interval: 10s
     honor_labels: true
     static_configs:
-      - targets: ['shortner:2112']
+      - targets: ['shortener:2112']
   - job_name: 'mongo'
     scrape_interval: 10s
     honor_labels: true

@@ -1,4 +1,4 @@
-module github.com/sinakeshmiri/shortner
+module github.com/sinakeshmiri/shortener
 
 go 1.20
 

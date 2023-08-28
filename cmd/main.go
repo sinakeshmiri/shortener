@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 
-
 	"go.opentelemetry.io/otel/sdk/resource"
 
 	"go.opentelemetry.io/otel"
@@ -20,12 +19,12 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	// application
 	"github.com/keratin/authn-go/authn"
-	"github.com/sinakeshmiri/shortner/internal/application/api"
-	"github.com/sinakeshmiri/shortner/internal/application/core/shortner"
+	"github.com/sinakeshmiri/shortener/internal/application/api"
+	"github.com/sinakeshmiri/shortener/internal/application/core/shortener"
 
 	// adapters
-	hFiber "github.com/sinakeshmiri/shortner/internal/adapters/framework/left/fiber"
-	"github.com/sinakeshmiri/shortner/internal/adapters/framework/right/db"
+	hFiber "github.com/sinakeshmiri/shortener/internal/adapters/framework/left/fiber"
+	"github.com/sinakeshmiri/shortener/internal/adapters/framework/right/db"
 )
 
 func main() {
@@ -39,7 +38,7 @@ func main() {
 	AUTHN_ISSUER := os.Getenv("AUTHN_ISSUER")
 	AUTHN_AUDIENCE := os.Getenv("AUTHN_AUDIENCE")
 	http.Handle("/metrics", promhttp.Handler())
-	
+
 	go http.ListenAndServe(":2112", nil)
 
 	tp := initTracer(OTEL_EXPORTER_JAEGER_ENDPOINT)
@@ -56,13 +55,13 @@ func main() {
 	defer dbAdapter.CloseDbConnection()
 
 	// core
-	urlschan:=make(chan string,1000)
-	core, err := shortner.New(NODE_ID,urlschan)
+	urlschan := make(chan string, 1000)
+	core, err := shortener.New(NODE_ID, urlschan)
 	if err != nil {
 		log.Fatalf("failed to initiate core: %v", err)
 	}
-	
-	applicationAPI := api.NewApplication(dbAdapter, core,urlschan)
+
+	applicationAPI := api.NewApplication(dbAdapter, core, urlschan)
 
 	ac := authn.Config{
 		Issuer:         AUTHN_ISSUER,

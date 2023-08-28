@@ -1,6 +1,6 @@
 version: '3'
 services:
-  shortner:
+  shortener:
     build: .
     ports:
       - "8082:3000"
@@ -11,8 +11,8 @@ services:
       - AUTHN_URL=http://authn:3000
       - AUTHN_PASSWORD=sina
       - AUTHN_USERNAME=sina
-      - AUTHN_ISSUER=http://authn.shortnerd.local:8080
-      - AUTHN_AUDIENCE=shortnerd.local
+      - AUTHN_ISSUER=http://authn.shortenerd.local:8080
+      - AUTHN_AUDIENCE=shortenerd.local
       - OTEL_EXPORTER_JAEGER_ENDPOINT=http://jaeger:14268/api/traces
     depends_on:
       - authn
@@ -48,10 +48,10 @@ services:
     environment:
       - DATABASE_URL=postgres://authn:S3cret@authndb:5432/authn?sslmode=disable
       - REDIS_URL=redis://redis:6379/0
-      - AUTHN_URL=http://authn.shortnerd.local:8080
+      - AUTHN_URL=http://authn.shortenerd.local:8080
       - HTTP_AUTH_USERNAME=sina
       - HTTP_AUTH_PASSWORD=sina
-      - APP_DOMAINS=shortnerd.local
+      - APP_DOMAINS=shortenerd.local
       - SECRET_KEY_BASE=kzJr4WEFABfCm5vTvZUJ
       - PUBLIC_PORT=3001
     depends_on:
