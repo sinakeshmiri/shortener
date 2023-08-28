@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shortener-deployment
+  namespace: shortener
+spec:
+  replicas: 3  # Number of replicas (Pods) to maintain
+  selector:
+    matchLabels:
+      app: shortener-app
+  template:
+    metadata:
+      labels:
+        app: shortener-app
+    spec:
+      containers:
+        - name: shortener
+          image: sinakeshmiri/shortner
+          envFrom:
+          - secretRef:
+              name: shortener-secret
+          - configMapRef:
+              name: shortener-configmap
+          ports:
+            - containerPort: 3080  # Port on which the container listens

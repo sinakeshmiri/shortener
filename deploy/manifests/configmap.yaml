@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: shortener-configmap
+  namespace: shortener-namespace
+data:
+  MY_ENV: "HELLO"

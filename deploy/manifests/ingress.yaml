@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: shortener-ingress
+  namespace: shortener
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: shortener.example.com  # Replace with your actual domain
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: shortener-service
+                port:
+                  number: 80
