@@ -5,3 +5,7 @@ metadata:
   namespace: shortener-namespace
 data:
   MY_ENV: "HELLO"
+  NODE_ID: "1"
+  AUTHN_ISSUER : "http://authn.example.com"
+  AUTHN_AUDIENCE : "shortener.example.com"
+  OTEL_EXPORTER_JAEGER_ENDPOINT : "http://jaeger:14268/api/traces"
