@@ -26,7 +26,6 @@ func New(nodeName string, urlschan chan string) (*shortener, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	return &shortener{urlschan: urlschan, node: node}, nil
 }
 

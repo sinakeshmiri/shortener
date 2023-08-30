@@ -18,10 +18,7 @@ func NewApplication(db ports.DbPort, shortener shortener, urlschan chan string) 
 }
 
 func (apia Application) NewURL(url, username string) (string, error) {
-	/*urlID, err := apia.shortener.Short(url)
-	if err != nil {
-		return "", err
-	}*/
+
 	urlID := <-apia.urlschan
 	apia.db.AddURL(url, urlID, username)
 	return string(urlID), nil
