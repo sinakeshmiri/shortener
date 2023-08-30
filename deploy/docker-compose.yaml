@@ -19,6 +19,8 @@ services:
       - mongo
   mongo:
     image: mongo
+    ports:
+      - 27017:27017
   authndb:
     image: bitnami/postgresql:14.9.0
     ports:

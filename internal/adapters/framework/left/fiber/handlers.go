@@ -23,7 +23,13 @@ func (ha Adapter) addURL(c *fiber.Ctx) error {
 	if err := c.BodyParser(url); err != nil {
 		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
 	}
-	urlID, err := ha.api.NewURL(url.URL, c.Params("username"))
+	value := c.Locals("username")
+	strValue, ok := value.(string) // Type assertion
+		if !ok {
+			// Handle the case where the type assertion fails
+			return c.SendStatus(fiber.StatusInternalServerError)
+		}
+	urlID, err := ha.api.NewURL(url.URL, strValue)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
 	}
@@ -31,7 +37,13 @@ func (ha Adapter) addURL(c *fiber.Ctx) error {
 }
 
 func (ha Adapter) deleteURL(c *fiber.Ctx) error {
-	err := ha.api.DeleteURL(c.Params("id"), c.Params("username"))
+	value := c.Locals("username")
+		strValue, ok := value.(string) // Type assertion
+		if !ok {
+			// Handle the case where the type assertion fails
+			return c.SendStatus(fiber.StatusInternalServerError)
+		}
+	err := ha.api.DeleteURL(c.Params("id"), strValue)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).SendString(err.Error())
 	}
@@ -39,8 +51,14 @@ func (ha Adapter) deleteURL(c *fiber.Ctx) error {
 }
 
 func (ha Adapter) getMetrics(c *fiber.Ctx) error {
+	value := c.Locals("username")
+	strValue, ok := value.(string) // Type assertion
+		if !ok {
+			// Handle the case where the type assertion fails
+			return c.SendStatus(fiber.StatusInternalServerError)
+	}
 	id:= c.Params("id")
-	metrics, err := ha.api.GetMetrics(c.Params("username"),id)
+	metrics, err := ha.api.GetMetrics(strValue,id)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).SendString(err.Error())
 	}
